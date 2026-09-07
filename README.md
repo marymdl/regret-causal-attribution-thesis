@@ -22,7 +22,6 @@ tests whether:
 - `analysis/` — numbered scripts that reproduce each analysis stage, in order.
 - `docs/methodology.md` — full written methodology.
 - `results/figures/` — final figures used in the thesis.
-- `data/README.md` — describes the expected raw data format
 
 ## Requirements
 
