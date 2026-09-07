@@ -1,0 +1,114 @@
+%% ============================================================
+%  Fit hybrid regret/relief Q-learning models (M1, M2, M3) per subject
+%  MATLAB 2015-compatible: uses only fminsearch (base MATLAB, no
+%  Optimization Toolbox needed). Requires load_subject_raw.m and
+%  ql_negloglik.m in the same folder.
+% ============================================================
+
+basePath = 'D:\my task\subjects\spvalue';
+moveDuration = 4;
+half_trial   = moveDuration / 2;   % same RT threshold convention as build_T_general_rnd.m
+
+files = dir(fullfile(basePath,'*_results.mat'));
+names = cell(size(files));
+for i = 1:length(files)
+    names{i} = strrep(files(i).name, '_results.mat', '');
+end
+names = sort(names);
+n_subjects = length(names)/2;
+subject_files = cell(n_subjects,1);
+for i = 1:n_subjects
+    subject_files{i} = {names{2*i-1}, names{2*i}};
+end
+
+n_restarts = 7;   % means model starts n times from different points to avoid being stucked
+
+n_params_by_model = [3, 4, 5];  % M1(alpha_R, alpha_F, beta), M2(M1+ alpha_C), M3(M1+alpha_regret,alpha_relief)
+
+results_nll = nan(n_subjects, 3);
+results_aic = nan(n_subjects, 3);
+results_params = cell(n_subjects, 3);  % store fitted [alpha_R, alpha_F, (alpha_C or alpha_regret/relief), beta]
+
+fmin_opts = optimset('Display','off', 'MaxIter', 1000, 'MaxFunEvals', 2000);
+
+fprintf('Fitting %d subjects x 3 models x %d restarts...\n', n_subjects, n_restarts);
+
+for s = 1:n_subjects
+    fprintf('Subject %d/%d (%s / %s)...\n', s, n_subjects, subject_files{s}{1}, subject_files{s}{2});
+
+    raw = load_subject_raw(basePath, subject_files{s}{1}, subject_files{s}{2});
+
+    for model_type = 1:3
+        n_p = n_params_by_model(model_type);
+        best_nll = Inf; %at first I set infinit value for this var. so any new result(which is smaller) could replace this. 
+        best_theta = nan(1, n_p);
+
+        for r = 1:n_restarts
+            theta0 = randn(1, n_p) * 0.5; % random starting point near 0 (i.e. alpha~0.5, beta~1)
+            % multiplying theta0 0.5 times makes tehta starting points to
+            % be close to zero. So in sigmoid function, they'll be around 0.5 
+            try
+                [theta_fit, nll_fit] = fminsearch(@(th) ql_negloglik(th, raw, model_type,  half_trial), ...
+                    theta0, fmin_opts); %fit means optimized/best values for nll and theta . 
+                if nll_fit < best_nll
+                    best_nll = nll_fit;
+                    best_theta = theta_fit;
+                end
+            catch ME
+                fprintf('  model %d restart %d failed: %s\n', model_type, r, ME.message);
+            end
+        end
+
+        results_nll(s, model_type) = best_nll; %best nll for this subject & this model 
+        results_aic(s, model_type) = 2*best_nll + 2*n_p; %bcz more parameters result in lower nll, so 2*param_nums gives penalty
+        results_params{s, model_type} = best_theta;
+    end
+end
+
+%% ============================================================
+%  Convert fitted (unconstrained) parameters back to interpretable
+%  units (alphas in (0,1), beta > 0) for reporting
+% ============================================================
+sigmoid = @(x) 1./(1+exp(-x));
+
+fprintf('\n======== Per-subject AIC comparison ========\n');
+fprintf('%-5s %-10s %-10s %-10s %-10s\n', 'No.','AIC_M1','AIC_M2','AIC_M3','Best');
+fprintf('%s\n', repmat('-',1,50));
+for s = 1:n_subjects
+    [~, best_m] = min(results_aic(s,:));
+    fprintf('%-5d %-10.2f %-10.2f %-10.2f M%d\n', s, ...
+        results_aic(s,1), results_aic(s,2), results_aic(s,3), best_m);
+end
+
+%% ---- group-level: paired comparisons of AIC ----
+fprintf('\n======== Group-level AIC comparisons (paired t-tests) ========\n');
+[~, p12] = ttest(results_aic(:,1), results_aic(:,2));
+[~, p23] = ttest(results_aic(:,2), results_aic(:,3));
+[~, p13] = ttest(results_aic(:,1), results_aic(:,3));
+fprintf('M1 vs M2: mean AIC diff = %.2f, p = %.5f\n', mean(results_aic(:,1)-results_aic(:,2)), p12);
+fprintf('M2 vs M3: mean AIC diff = %.2f, p = %.5f\n', mean(results_aic(:,2)-results_aic(:,3)), p23);
+fprintf('M1 vs M3: mean AIC diff = %.2f, p = %.5f\n', mean(results_aic(:,1)-results_aic(:,3)), p13);
+fprintf('(negative diff => the SECOND model has lower/better AIC)\n');
+
+n_best = [sum(results_aic(:,1)==min(results_aic,[],2)), ...
+          sum(results_aic(:,2)==min(results_aic,[],2)), ...
+          sum(results_aic(:,3)==min(results_aic,[],2))];
+fprintf('\nNumber of subjects best fit by each model: M1=%d, M2=%d, M3=%d (of %d)\n', ...
+    n_best(1), n_best(2), n_best(3), n_subjects);
+
+%% ---- extract alpha_regret vs alpha_relief from M3, test asymmetry ----
+fprintf('\n======== Asymmetry test on M3 parameters ========\n');
+alpha_regret_all = nan(n_subjects,1);
+alpha_relief_all = nan(n_subjects,1);
+for s = 1:n_subjects
+    th = results_params{s,3};
+    alpha_regret_all(s) = sigmoid(th(3)); %regret is the third one in the params vector.
+    alpha_relief_all(s) = sigmoid(th(4));
+end
+[~, p_asym, ~, stats_asym] = ttest(alpha_regret_all, alpha_relief_all);
+fprintf('Mean alpha_regret = %.3f, Mean alpha_relief = %.3f\n', ...
+    mean(alpha_regret_all), mean(alpha_relief_all));
+fprintf('Paired t-test: t(%d) = %.3f, p = %.5f\n', stats_asym.df, stats_asym.tstat, p_asym);
+
+save('QL_model_results.mat', 'results_nll','results_aic','results_params', ...
+    'alpha_regret_all','alpha_relief_all');
