@@ -20,7 +20,7 @@ tests whether:
 - `src/` — reusable functions (data loading, table-building, model
   likelihood/simulation functions).
 - `analysis/` — numbered scripts that reproduce each analysis stage, in order.
-- `docs/methodology.md` — full written methodology.
+- `docs/methodology.md` — full written methodology.(the task's code is also included)
 - `results/figures/` — final figures used in the thesis.
 
 ## Requirements
