@@ -8,4 +8,5 @@ This research investigates how counterfactual based regret influences causal cre
 Core questions:
 
 Does regret improve credit assignment in addition to reward?
+
 Does a task-irrelevant random reward disrupt credit assignment via misattribution?
