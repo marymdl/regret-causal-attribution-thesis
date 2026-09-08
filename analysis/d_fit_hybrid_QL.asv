@@ -177,6 +177,6 @@ title('Distribution of per-subject AIC difference (M2 vs M3)');
 grid on;
 box on;
 
-% save figure 
+%% ---- save figure ----
 saveas(gcf,'AIC_M2_vs_M3_histogram.fig');   
-saveas(gcf,'AIC_M2_vs_M3_histogram.png');   
+saveas(gcf,'AIC_M2_vs_M3_histogram.png');   % PNG image

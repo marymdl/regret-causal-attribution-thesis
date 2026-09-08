@@ -1,18 +1,15 @@
-function [T_base, raw_seq] = build_alpha_search_data_new(basePath, subject_files, n_subjects, arms, half_trial)
-% BUILD_ALPHA_SEARCH_DATA  Reads each subject's raw files ONCE and
+function [T_base, raw_seq] = build_alpha_search_data(basePath, subject_files, n_subjects, arms, half_trial)
+% Reads each subject's raw files and
 %   returns:
 %     T_base  - table with Subject, Session, Choice_top, and the 6
-%               alpha-INDEPENDENT control predictors (Reward_chosen_L1-3,
+%               alpha-independent control predictors (Reward_chosen_L1-3,
 %               Reward_notchosen_L1-3). Much lighter than the full
-%               build_T_general_rnd (no 6-lag regret/relief, no 72
+%               build_T_general(no 6-lag regret/relief, no 72
 %               random-reward columns - not needed for this search).
 %     raw_seq - cell array, one entry per subject: an Nx5 matrix with
 %               columns [Session, prevChosen_idx, regret_val,
 %               armTop_idx, armBottom_idx], row-aligned exactly with
-%               T_base(T_base.Subject==s,:). Replaying this sequence
-%               with any alpha value reconstructs CumRegret_diff for
-%               that subject WITHOUT re-reading any files or rebuilding
-%               the reward-history queues.
+%               T_base(T_base.Subject==s,:).
 
     n_lags = 3;
     push_queue = @(q,val) [val q(1:end-1)];
@@ -112,7 +109,7 @@ function [T_base, raw_seq] = build_alpha_search_data_new(basePath, subject_files
     % add a default CumRegret_diff column (alpha=0.5) so T_base is
     % structurally complete on its own; the alpha grid-search script
     % overwrites this column with the value computed for each tested
-    % alpha, using the cached raw_seq (no re-reading files needed).
+    % alpha, using the raw_seq.
     default_alpha = 0.5;
     cum_col = nan(height(T_base), 1);
     for s = 1:n_subjects

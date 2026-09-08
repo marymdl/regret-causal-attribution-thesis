@@ -681,9 +681,9 @@ b_main_cum = mdl_interact_new.Coefficients.Estimate(idx_main_cum);
 fprintf('\nInteraction: b = %.4f, p = %.5f\n', b_int, p_int);
 if p_int < 0.05
     if sign(b_int) == sign(b_main_cum)
-        fprintf('AMPLIFYING interaction: random-reward misattribution makes cumulative regret''s effect STRONGER.\n');
+        fprintf('amplyfing interaction: random-reward misattribution makes cumulative regret''s effect stronger.\n');
     else
-        fprintf('ATTENUATING interaction: random-reward misattribution makes cumulative regret''s effect WEAKER.\n');
+        fprintf('attenuating interaction: random-reward misattribution makes cumulative regret''s effect weaker.\n');
     end
 else
     fprintf('No significant interaction: cumulative regret''s effect on choice does not depend on this random-reward channel.\n');
@@ -692,7 +692,7 @@ end
 ll_diff = mdl_interact_new.LogLikelihood -mdl_base_new.LogLikelihood;
 if ll_diff > 0
     lrt = 2*ll_diff; p_lrt = 1 - chi2cdf(lrt,1);
-    fprintf('LRT (interaction vs main-effects model): stat=%.3f, p=%.5f\n', lrt, p_lrt);
+    fprintf('LRT (interaction vs main effects model): stat=%.3f, p=%.5f\n', lrt, p_lrt);
 end
 
 

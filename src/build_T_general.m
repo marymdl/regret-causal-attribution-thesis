@@ -1,21 +1,14 @@
-function T = build_T_general_rnd_condition_fixed(alpha_ewma, basePath, subject_files, n_subjects, arms, n_lags, half_trial)
-%  For each arm X, 12 history queues track the magnitude of the random
+function T = build_T_general(alpha_ewma, basePath, subject_files, n_subjects, arms, n_lags, half_trial)
+%  Random reward explanation: For each arm , 12 history queues track the magnitude of the random
 %  reward under every combination of:
 %    - Status  : chosen (cho) vs unchosen (unc) at trial t-1
 %    - Timing  : same trial as choice (t0) vs feedback trial (t1)
 %    - Position: same position as X (same), different (diff), any (any)
 %
-%  Each queue stores the MAGNITUDE of the random reward when the
+%  Each queue stores the magnitude of the random reward when the
 %  condition was met, or 0 when it was not (including when no random
 %  reward appeared at all).
 %
-%  CHANGE FROM PREVIOUS VERSION: also outputs CumRegret_mean_all, the
-%  mean of cum_regret across ALL THREE arms (not just the diff of the
-%  two shown this trial). This is an ABSOLUTE, monotonic-ish quantity
-%  suitable for testing whether the overall MAGNITUDE of accumulated
-%  regret grows over the session (a descriptive/environmental question),
-%  as opposed to CumRegret_diff x Trial_z, which tests whether the
-%  BEHAVIORAL WEIGHT placed on regret grows over the session.
 
     push_queue = @(q, val) [val, q(1:end-1)];   %q: the sequence list / val: new value
 
@@ -47,7 +40,7 @@ function T = build_T_general_rnd_condition_fixed(alpha_ewma, basePath, subject_f
             %%  status:   cho = chosen arm,   unc = unchosen arm
             %%  position: same, diff, any
             %%  timing:   t0 = same trial as choice, t1 = feedback trial
-
+    
             % --- chosen arm, same trial (t0) ---
             hist_rnd_cho_same_t0.(a) = nan_q;
             hist_rnd_cho_diff_t0.(a) = nan_q;
@@ -115,7 +108,7 @@ function T = build_T_general_rnd_condition_fixed(alpha_ewma, basePath, subject_f
                 armTop    = topShape{t};
                 armBottom = bottomShape{t};
 
-                %% ---- Row-building only needs choice{t} ----
+                %%  row-building only needs choice{t}
                 RT_current   = RT_all(t);
                 saw_feedback = ~isnan(RT_current) && RT_current > half_trial;
 
@@ -148,10 +141,10 @@ function T = build_T_general_rnd_condition_fixed(alpha_ewma, basePath, subject_f
                     row = build_row();
                 end
 
-                %% ---- History UPDATE only needs chosenShape{t-1} ----
+                %%  History update only needs chosenShape{t-1} 
                 %  (mag_chosen(t)/mag_notChosen(t)/reward_random(t) are feedback about
                 %  trial t-1's choice, shown during trial t, independent of whether
-                %  the person responded AT trial t)
+                %  the person responded at trial t)
                 if have_prev_choice && ~isnan(mag_chosen(t)) && ~isnan(mag_notChosen(t))
                     prevChosen = chosenShape{t-1};
                     if strcmp(prevChosen, topShape{t-1})
@@ -264,7 +257,7 @@ function T = build_T_general_rnd_condition_fixed(alpha_ewma, basePath, subject_f
     end
 
     var_names{end+1} = 'CumRegret_diff';
-    var_names{end+1} = 'CumRegret_mean_all';   % NEW column
+    var_names{end+1} = 'CumRegret_mean_all';   % new column
 
     T = array2table(all_rows, 'VariableNames', var_names);
     T.Subject = categorical(T.Subject);

@@ -1,14 +1,25 @@
 function nll = ql_negloglik(theta, raw, model_type,half_trial)
-%   Negative log-likelihood of choice data under the hybrid
-%   regret/relief learning model, for ONE subject's cached raw data.
-%
+%   Negative log likelihood of choice data under the hybrid
+%   regret/relief learning model.
+
 %   theta       : unconstrained parameter vector (transformed internally
 %                 so alphas stay in (0,1) via sigmoid, beta stays >0 via exp)
-%                 unconstrained means they're not limited between 0,1 . 
+%                 [unconstrained means parameter values are not limited between 0,1]
+
 %   raw         : struct from load_subject_raw.m (fields part1, part2)
-%   model_type  : 1 = reward-only but different lr for real & counterfactual rwd(M1, 3 free params: alpha_R, alpha_F, beta)
+%   model_type  : 1 = reward-only but different learning rate for real & counterfactual rwd(M1, 3 free params: alpha_R, alpha_F, beta)
 %                 2 = symmetric counterfactual (M2, 4 params: + alpha_C)
 %                 3 = asymmetric counterfactual (M3, 5 params: alpha_regret, alpha_relief)
+
+%   half_trial  : RT threshold 
+%                 If RT_all(t) > half_trial, the subject is assumed to
+%                 have seen the feedback before responding at trial t, so
+%                 Q is updated before evaluating choice probability at t.
+%                 If RT_all(t) <= half_trial (fast response,
+%                 feedback not yet seen), choice probability at t
+%                 is evaluated before the update - matching the
+%                 before-after snapshot logic used throughout the
+%                 regression pipeline.
 
     sigmoid = @(x) 1./(1+exp(-x));
 
@@ -18,7 +29,7 @@ function nll = ql_negloglik(theta, raw, model_type,half_trial)
     switch model_type
         case 1
             alpha_regret = 0; alpha_relief = 0;
-            beta = exp(theta(3)); % To make sure temperature stay positive / beta is the last param in theta lists.
+            beta = exp(theta(3)); % To make sure temperature stay positive / beta is the last parameter in thetas list.
         case 2
             alpha_C = sigmoid(theta(3));
             alpha_regret = alpha_C; alpha_relief = alpha_C;
@@ -36,10 +47,10 @@ function nll = ql_negloglik(theta, raw, model_type,half_trial)
 
     for part = 1:2
         R = raw.(['part' num2str(part)]);
-        n = R.n;
+        n = R.n; %data length
 
         for t = 2:n
-            if isempty(R.chosenShape{t-1}) || isempty(R.choice{t})  % *** check these conditions later ***
+            if isempty(R.chosenShape{t-1}) || isempty(R.choice{t})  % *** check validity of these conditions later ***
                 continue;
             end
             armTop    = R.topShape{t};
@@ -49,7 +60,7 @@ function nll = ql_negloglik(theta, raw, model_type,half_trial)
             saw_feedback = ~isnan(R.RT_all(t)) && R.RT_all(t) > half_trial;
             % local function handle to compute choice log-likelihood with
             % whatever Q currently holds
-            eval_choice = @() local_choice_ll(Q, armTop, armBottom, beta, R.choice{t});
+           % eval_choice = @() local_choice_ll(Q, armTop, armBottom, beta, R.choice{t});
             
             %% ---- update Q from feedback about trial t-1, revealed at t ----
             if have_update
@@ -63,10 +74,11 @@ function nll = ql_negloglik(theta, raw, model_type,half_trial)
                 Ru = R.mag_notChosen(t);
             end
             
-            %% ---- fast response (didn't see feedback yet): evaluate choice BEFORE the update ----
+            %% ---- fast response (hasn't seen feedback yet): evaluate choice before the update ----
             if ~saw_feedback
-                nll = nll - eval_choice();
+                 nll = nll - local_choice_ll(Q, armTop, armBottom, beta, R.choice{t});
             end
+            
             if have_update
                 Q.(c) = Q.(c) + alpha_R*(Rc - Q.(c)) - alpha_regret*max(0, Ru-Rc); 
                 % We update the value of chosen shape in two ways: 1)real
@@ -79,18 +91,16 @@ function nll = ql_negloglik(theta, raw, model_type,half_trial)
              %% ---- slow response (saw feedback already): evaluate choice
             %       AFTER the update ----
             if saw_feedback
-                nll = nll - eval_choice();
+                nll = nll - local_choice_ll(Q, armTop, armBottom, beta, R.choice{t});
             end
 
 
         end
-           
-          %  nll = nll - (y*log(p_top) + (1-y)*log(1-p_top)); % the error 
     end
 end
     
 function ll = local_choice_ll(Q, armTop, armBottom, beta, choice_str)
-        %% ---- predict choice at trial t using CURRENT Q ----
+        %% ---- predict choice at trial t using current Q ----
     % now that we updated the value of each shape, predict the
     % choise of top
     Vtop = Q.(armTop); 
