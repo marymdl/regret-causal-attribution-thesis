@@ -1,10 +1,12 @@
 %% === Mu based accuracy === 
 
-%    circle   ? Option1  (Mu_Option1)
-%    square   ? Option2  (Mu_Option2)
-%    triangle ? Option3  (Mu_Option3)
+%    circle   = Option1  (Mu_Option1) in runs csv files
+%    square   = Option2  (Mu_Option2)
+%    triangle = Option3  (Mu_Option3)
 
-dataPath = 'D:\my task\subjects\all\run_based';  
+% put "runs_table_csv' files in the same folder as subjects data
+
+dataPath = 'D:\my task\subjects\all\run_based\final_touch';  
 
 matFiles = dir(fullfile(dataPath,'*_results.mat'));
 
@@ -183,6 +185,7 @@ end
 fprintf('\nGroup t-test vs 50%%: mean=%.1f%%, t(%d)=%.3f, p=%.4f\n', ...
         nanmean(acc_both_all), stats_grp.df, stats_grp.tstat, p_grp);
 
+
 %% ============================================================
 % plot
 % ============================================================
@@ -192,9 +195,9 @@ n_valid   = length(valid_idx);
 figure('Color','w','Position',[100 100 900 420]);
 
 %% ============================================================
-% subplot 1 : per-subject accuracy
+% plot : per-subject accuracy
 % ============================================================
-subplot(1,2,1);
+
 hold on;
 
 x = 1:n_valid;
@@ -216,7 +219,7 @@ end
 
 set(gca,...
     'XTick',1:n_valid,...
-    'XTickLabel',xlabels,...
+    'XTickLabel',[],...
     'FontSize',7);
 
 ylabel('Accuracy (%)','FontSize',11);
@@ -230,70 +233,20 @@ ylim([30 100]);
 grid on;
 box on;
 
-%% ============================================================
-% subplot 2 : Session1 vs Session2
-% ============================================================
-subplot(1,2,2);
-hold on;
-
-scatter(acc_s1_all(valid_idx),...
-        acc_s2_all(valid_idx),...
-        70,...
-        [0.3 0.5 0.9],...
-        'filled');
-
-ctxt = '';
-
-if n_valid > 2
-
-    pf = polyfit(acc_s1_all(valid_idx),...
-                 acc_s2_all(valid_idx),1);
-
-    xl = linspace(min(acc_s1_all(valid_idx))-2,...
-                  max(acc_s1_all(valid_idx))+2,...
-                  50);
-
-    plot(xl,polyval(pf,xl),...
-         'r-','LineWidth',2);
-
-    [rv,pv] = corr(acc_s1_all(valid_idx),...
-                   acc_s2_all(valid_idx),...
-                   'type','Spearman');
-
-    ctxt = sprintf('r = %.2f, p = %.3f',rv,pv);
-
-end
+% ---------- rotated labels ----------
+yl = ylim;
 
 for i = 1:n_valid
 
-    lbl = subject_files{valid_idx(i)}{1};
-    lbl = regexprep(lbl,'\d+$','');
-
-    text(acc_s1_all(valid_idx(i))+0.3,...
-         acc_s2_all(valid_idx(i)),...
-         lbl,...
+    text(i,...
+         yl(1)-2,...
+         xlabels{i},...
+         'Rotation',45,...
+         'HorizontalAlignment','right',...
+         'VerticalAlignment','top',...
          'FontSize',7);
+
 end
-
-plot([30 100],[30 100],'k--','LineWidth',1);
-plot([50 50],[30 100],'k:','LineWidth',0.8);
-plot([30 100],[50 50],'k:','LineWidth',0.8);
-
-xlabel('Accuracy Session 1 (%)','FontSize',11);
-ylabel('Accuracy Session 2 (%)','FontSize',11);
-
-if isempty(ctxt)
-    title('S1 vs S2 consistency','FontSize',11);
-else
-    title(sprintf('S1 vs S2 consistency\n%s',ctxt),...
-          'FontSize',11);
-end
-
-xlim([30 100]);
-ylim([30 100]);
-
-grid on;
-box on;
 
 %% ============================================================
 % Save results

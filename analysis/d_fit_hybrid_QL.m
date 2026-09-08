@@ -5,7 +5,7 @@
 %  ql_negloglik.m in the same folder.
 % ============================================================
 
-basePath = 'D:\my task\subjects\spvalue';
+basePath = 'D:\my task\subjects\all\run_based\final_touch';
 moveDuration = 4;
 half_trial   = moveDuration / 2;   % same RT threshold convention as build_T_general_rnd.m
 

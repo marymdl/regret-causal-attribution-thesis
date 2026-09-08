@@ -1,26 +1,21 @@
 %% ============================================================
-%  Grid search for optimal alpha for CumRegret - CACHED VERSION
-%  Fixes: build_alpha_search_data is called ONCE (not once per alpha),
-%  and the per-alpha CumRegret_diff is recomputed cheaply by replaying
-%  the cached raw_seq instead of re-reading files. Results are saved
-%  to disk so re-opening MATLAB does not require rerunning the search.
+%  Grid search for optimal alpha for CumRegret 
 % ============================================================
 
 basePath      = 'D:\my task\subjects\all\run_based';
 resultsFile   = fullfile(basePath, 'alpha_gridsearch_results.mat');
 alpha_grid    = 0.05 : 0.05 : 1;
 n_alpha       = length(alpha_grid);
-half_trial    = 2;   % moveDuration/2, matches your earlier scripts
+half_trial    = 2;   % moveDuration/2, matches my earlier scripts
 arms          = {'circle','square','triangle'};
 
 if exist(resultsFile, 'file')
-    fprintf('Cached results found - loading instead of rerunning the search.\n');
     load(resultsFile, 'll_s1','ll_s2','ll_both','best_alpha_s1','best_alpha_s2', ...
         'best_alpha_both','subj_names_gs','alpha_grid','subject_files','n_subjects');
 else
-    fprintf('No cache found - running the full grid search (this happens only once).\n');
+    fprintf('No cache found.\n');
 
-    %% ---- build subject list (same pairing logic as before) ----
+    %% ---- build subject list ----
     files = dir(fullfile(basePath,'*_results.mat'));
     names = cell(size(files));
     for i = 1:length(files)
@@ -38,7 +33,7 @@ else
         subj_names_gs{si} = [subject_files{si}{1} '/' subject_files{si}{2}];
     end
 
-    %% ---- build the data ONCE: T_base (alpha-independent) + raw_seq ----
+    %% ---- build the data once: T_base (alpha-independent) + raw_seq ----
     fprintf('Reading raw files once and caching sequences...\n');
     [T_base, raw_seq] = build_alpha_search_data(basePath, subject_files, n_subjects, arms, half_trial);
     T_base.Subject = categorical(T_base.Subject);
@@ -61,8 +56,6 @@ else
             seq_si = raw_seq{si};
             if isempty(seq_si), continue; end
 
-            % cheaply recompute CumRegret_diff for this alpha by replaying
-            % the cached sequence - no file I/O, no history rebuilding
             cum = zeros(3,1);
             cum_col = nan(size(seq_si,1),1);
             for r = 1:size(seq_si,1)
@@ -121,7 +114,7 @@ else
         [~, idx] = max(ll_both(si,:)); if ~isnan(ll_both(si,idx)), best_alpha_both(si) = alpha_grid(idx); end
     end
 
-    %% ---- save cache so this never has to run again ----
+    %% ---- we save cache so this never has to run again & make the process longer ----
     save(resultsFile, 'll_s1','ll_s2','ll_both','best_alpha_s1','best_alpha_s2', ...
         'best_alpha_both','subj_names_gs','alpha_grid','subject_files','n_subjects');
     fprintf('Results saved to %s\n', resultsFile);
@@ -137,7 +130,7 @@ for si = 1:n_subjects
             subj_names_gs{si}, best_alpha_s1(si), best_alpha_s2(si), best_alpha_both(si));
 end
 
-fprintf('\n--- Group ---\n');
+fprintf('\n Group \n');
 fprintf('%-10s %-10s %-10s\n','S1','S2','Both');
 fprintf('Mean:   %-10.2f %-10.2f %-10.2f\n', ...
         nanmean(best_alpha_s1), nanmean(best_alpha_s2), nanmean(best_alpha_both));

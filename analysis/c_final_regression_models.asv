@@ -1,5 +1,8 @@
 % Guidance:
 
+% First, I z-scored the variables within each subject to ensure that the
+% correlations were not driven by between subject differences. 
+
 % 0 (lines: ): Does regret improve fit over raw reward values alone?
 % 1 (lines: ): Does random reward affect credit assinment? 
 % 2 (lines: ): Null model comparison among all models made by far
@@ -7,9 +10,8 @@
 % 4 (lines: ): does random-reward misattribution moderate the effect of Regret_chosen on choice?
 % 5 (lines: ): Reward & Regret decay comparison
 % 6 (lines: ): Regret & Relief comparison (effect & decay )
-basePath = 'D:\my task\subjects\spvalue';
 
-load('T_final.mat','T'); 
+basePath = 'D:\my task\subjects\all\run_based\final_touch'; 
 
 n_history    = 6;
 moveDuration = 4;
@@ -29,16 +31,15 @@ for i = 1:n_subjects
     subject_files{i} = {names{2*i-1}, names{2*i}};
 end
 
+% If you have already created the table, just load it instead of creating it again.
 T = build_T_general(alpha, basePath, subject_files, n_subjects, arms, n_history, half_trial);
 
 %% === save or load the table ===
 save('T_final.mat','T','-v7.3'); 
+load('T_final.mat','T');
 
-
-%%
-% z-score Trial within EACH (subject, session) pair - not just subject -
-% because Trial numbers reset at the start of each session (part 1 and
-% part 2 both run 1..N)
+%% == z-score trial within each (subject, session) pair(not just subject) ==
+% because trial numbers reset at the start of each session
 T.Trial_z = nan(height(T),1);
 subj_list = unique(T.Subject);
 for i = 1:length(subj_list)
@@ -50,13 +51,8 @@ for i = 1:length(subj_list)
     end
 end
 
-
-
 opts = statset('MaxIter', 500, 'TolFun', 1e-8, 'TolX', 1e-8);  % default MaxIter (100) is often not enough here
 
-%% ============================================================
-%  WITHIN-SUBJECT Z-SCORING of predictor variables
-% ============================================================
 
 %% ---- (1) list every continuous predictor to standardize ----
 lags = {'L1','L2','L3','L4','L5','L6'};
@@ -65,11 +61,10 @@ predictor_base_names = {'Reward_chosen_','Reward_notchosen_','Regret_chosen_','R
 predictor_cols = {};
 for b = 1:length(predictor_base_names)
     for L = 1:length(lags)
-        predictor_cols{end+1} = [predictor_base_names{b} lags{L}]; %#ok<SAGROW>
+        predictor_cols{end+1} = [predictor_base_names{b} lags{L}]; 
     end
 end
 
-% single (non-lagged) continuous predictors, if present in T
 extra_cols = {'CumRegret_diff','CumRegret_mean_all'};
 for e = 1:length(extra_cols)
     if ismember(extra_cols{e}, T.Properties.VariableNames)
@@ -81,10 +76,10 @@ predictor_cols = predictor_cols(ismember(predictor_cols, T.Properties.VariableNa
 fprintf('Will z-score %d predictor columns, WITHIN each subject:\n', length(predictor_cols));
 disp(predictor_cols');
 
-%% ---- (2) do the z-scoring, subject by subject ----
+%% ---- (2) do z-scoring ----
 % For each predictor column, and for each subject separately, subtract
 % that subject's own mean and divide by that subject's own SD. Results
-% go into NEW columns with a "_z" suffix - the original raw columns are
+% go into new columns with a "_z" suffix. And the original raw columns are
 % left untouched, so we can compare both.
 subj_list = unique(T.Subject);
 
@@ -99,9 +94,8 @@ for c = 1:length(predictor_cols)
         mu = mean(vals);
         sd = std(vals);
         if sd == 0 || isnan(sd)
-            % this subject had zero variance on this predictor (rare,
-            % e.g. a lag that's constant for them) - z-score is
-            % undefined, so just set to 0 rather than dividing by zero
+            % this subject had zero variance on this predictor (rare)
+            % so just set to 0 rather than dividing by zero
             T.(z_col)(m) = 0;
         else
             T.(z_col)(m) = (vals - mu) / sd;
@@ -109,9 +103,9 @@ for c = 1:length(predictor_cols)
     end
 end
 
-%% ============================================================
-%  (3) COMPARE correlation matrices: RAW vs Z-SCORED (within subject)
-% ============================================================
+
+%% ===  (3) Compare correlation matrices: raw vs z-scored (within subject)==
+
 raw_cols = predictor_cols;
 z_cols   = strcat(predictor_cols, '_z');
 
@@ -155,7 +149,7 @@ set(gca,'XTick',1:length(z_cols),'XTickLabel',strrep(raw_cols,'_','\_'), ...
     'XTickLabelRotation',90,'FontSize',6);
 set(gca,'YTick',1:length(z_cols),'YTickLabel',strrep(raw_cols,'_','\_'),'FontSize',6);
 
-%% RAW correlation matrix
+%% raw correlation matrix
 figure('Color','w','Position',[50 50 700 600]);
 imagesc(R_raw);
 caxis([-1 1]);
@@ -186,9 +180,9 @@ set(gca,'XTick',1:length(z_cols), ...
 set(gca,'YTick',1:length(z_cols), ...
     'YTickLabel',strrep(raw_cols,'_','\_'), ...
     'FontSize',6);
-%% ============================================================
-%  (4) Build z-scored term strings for use in our regression models
-% ============================================================
+
+
+%% ===  (4) Build z-scored term strings for use in our regression models
 make_terms_z = @(prefix) strjoin(cellfun(@(L) [prefix L '_z'], lags, ...
                 'UniformOutput',false), ' + ');
 
