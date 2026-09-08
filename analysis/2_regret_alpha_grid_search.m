@@ -40,7 +40,7 @@ else
 
     %% ---- build the data ONCE: T_base (alpha-independent) + raw_seq ----
     fprintf('Reading raw files once and caching sequences...\n');
-    [T_base, raw_seq] = build_alpha_search_data_new(basePath, subject_files, n_subjects, arms, half_trial);
+    [T_base, raw_seq] = build_alpha_search_data(basePath, subject_files, n_subjects, arms, half_trial);
     T_base.Subject = categorical(T_base.Subject);
 
     f_regret = 'Choice_top ~ CumRegret_diff';

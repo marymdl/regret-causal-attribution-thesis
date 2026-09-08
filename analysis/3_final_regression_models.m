@@ -29,7 +29,7 @@ for i = 1:n_subjects
     subject_files{i} = {names{2*i-1}, names{2*i}};
 end
 
-T = build_T_general_rnd_condition_fixed(alpha, basePath, subject_files, n_subjects, arms, n_history, half_trial);
+T = build_T_general(alpha, basePath, subject_files, n_subjects, arms, n_history, half_trial);
 
 %% === save or load the table ===
 save('T_final.mat','T','-v7.3'); 
