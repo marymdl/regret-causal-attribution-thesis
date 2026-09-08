@@ -38,9 +38,9 @@ tests whether:
 ## How to reproduce
 
 1. Place raw `*_results.mat` files in a local `data/raw/` folder
-2. Update `basePath` at the top of each script in `analysis/` to point to
+2. Update `basePath` at the top of each script in `analysis/` to point t
    your local data folder.
-3. Move the function files(in 'scr') to the same folder as the analysis files.
+3. Move the function files(in `scr`) to the same folder as the analysis files.
 4. Run the scripts in `analysis/` in numbered order.
 
 ## Data availability
