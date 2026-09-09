@@ -85,7 +85,8 @@ mean difference of 1.63 events, 95% CI [0.95, 2.54], p<0.0001. Regret
 produces a larger but more transient effect; relief produces a smaller but
 more persistent one.
 
-**Figure7:** `bootstrap_tau_difference.png` — bootstrap
+**Figure7:** <img width="1200" height="900" alt="bootstrap_tau_difference" src="https://github.com/user-attachments/assets/e3d7d97a-84df-40c2-9038-5f4ac67a024c" />
+ — bootstrap
 distribution of the τ difference.
 
 ---
