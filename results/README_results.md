@@ -74,17 +74,18 @@ regret and relief lag-coefficients:
 
 | | Amplitude (A) | Time constant (τ, in choice-events) | Half-life |
 |---|---|---|---|
-| Regret | -0.055 | 1.22 | 0.85 |
-| Relief | -0.036 | 3.21 | 2.22 |
+| Regret | -0.0429 | 1.25 | 0.86 |
+| Relief | -0.0311 | 3.38 | 2.34 |
+
+<img width="1200" height="900" alt="regret_relief_observed_fitted_decay_curves" src="https://github.com/user-attachments/assets/ce46dcc8-9a86-420d-8a59-91acd492d661" />
+figure6. observed vs. fitted decay curves
 
 A subject-level bootstrap (2000 resamples) on τ(relief) − τ(regret) gave a
-mean difference of 1.79 events, 95% CI [1.11, 2.73], p<0.0001. Regret
+mean difference of 1.63 events, 95% CI [0.95, 2.54], p<0.0001. Regret
 produces a larger but more transient effect; relief produces a smaller but
 more persistent one.
 
-**Figure:** `figures/04_decay_curve_fit.png` — observed points + fitted
-exponential curves for both pathways.
-**Figure:** `figures/05_bootstrap_tau_difference.png` — bootstrap
+**Figure7:** `bootstrap_tau_difference.png` — bootstrap
 distribution of the τ difference.
 
 ---
