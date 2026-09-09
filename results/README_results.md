@@ -125,9 +125,13 @@ comparison across M1/M2/M3.
 α(relief) per subject.
 
 **Figure10:** <img width="1200" height="900" alt="AIC_M2_vs_M3_histogram" src="https://github.com/user-attachments/assets/521b6bd2-8fbe-4458-a602-831f0314edcf" />
+
+## 5. Q-learning model alpha real vs. fictive comparison
+<img width="661" height="56" alt="image" src="https://github.com/user-attachments/assets/98cc6ab5-1f37-41b3-b9a9-acacd2fb9ca6" />
+
 ---
 
-## 5. Methodological checks and negative findings
+## 6. Methodological checks and negative findings
 
 Several exploratory directions were tested and explicitly ruled out or
 flagged as unreliable - documented here for transparency:
@@ -151,7 +155,7 @@ flagged as unreliable - documented here for transparency:
 
 ---
 
-## 6. Ongoing / planned analyses
+## 7. Ongoing / planned analyses
 
 - Parameter recovery study for the Q-learning model parameters (checking
   identifiability of α(regret), α(relief), α_R, α_F).
