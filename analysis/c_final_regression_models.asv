@@ -1901,5 +1901,5 @@ title(sprintf('Bootstrap distribution (N=%d) | 95%% CI [%.2f, %.2f]', ...
 
 grid on;
 box on;
-saveas(gcf,'bootstrap_tau_difference.png');
+saveas(gcf,'01_reward_vs_regret_lrt.png');
 

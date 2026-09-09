@@ -6,7 +6,7 @@
 
 % put "runs_table_csv' files in the same folder as subjects data
 
-dataPath = 'D:\my task\subjects\all\run_based\final_touch';  
+dataPath = 'D:\my task\subjects\final_touch_acuuracy';  
 
 matFiles = dir(fullfile(dataPath,'*_results.mat'));
 
@@ -247,7 +247,8 @@ for i = 1:n_valid
          'FontSize',7);
 
 end
-
+   
+saveas(gcf,'mu_based_accuracy.png');  
 %% ============================================================
 % Save results
 % ============================================================
