@@ -2,7 +2,10 @@
 
 This page summarizes the findings so far.
 
----
+At the group level, participants achieved a mean accuracy of *67%*. Accuracy was defined as selecting the option with the highest expected value (i.e., the highest current underlying mean reward) on each trial.
+<img width="1200" height="900" alt="mu_based_accuracy" src="https://github.com/user-attachments/assets/5cf89990-de65-4100-9c39-273011ab0d2f" />
+
+
 
 ## 1. Regret predicts choice independently of raw reward value
 
@@ -11,7 +14,7 @@ of the chosen and forgone options, or does it also incorporate an explicit
 counterfactual comparison(regret)?
 
 A mixed-effects logistic regression comparing a reward-only model
-(`Reward_chosen` + `Reward_notchosen`, lags 1-3) against a model that adds
+(`Reward_chosen` + `Reward_notchosen`, lags 1-6) against a model that adds
 `Regret_chosen` showed that adding regret significantly improved model fit
 (likelihood-ratio test, see console output for exact statistics). This
 result held after controlling for random-reward misattribution terms and was
