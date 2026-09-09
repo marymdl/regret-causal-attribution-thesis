@@ -1,4 +1,4 @@
-# Results
+<img width="1200" height="900" alt="reward_vs_regret_per-subject_paired_comparison" src="https://github.com/user-attachments/assets/b184d6e6-3520-47dd-8eed-61b3e69b488c" /># Results
 
 This page summarizes the findings so far.
 
@@ -45,12 +45,18 @@ After identifying and correcting a structural collinearity issue (including
 higher-lag coefficients), a clean model with only `Regret_chosen` and
 `Relief_notchosen` (lags 1-6, no raw `Reward_chosen`) showed:
 
-- At lag 1, |β(Regret)| > |β(Relief)| (Wald contrast z=7.37, p<0.00001)
+- At lag 1, |β(Regret)| > |β(Relief)| (Wald contrast z=4.971, p<0.00001)
+- <img width="748" height="73" alt="image" src="https://github.com/user-attachments/assets/ffb000f1-899b-43c3-b5d9-606edf07222d" />
+
 - At lags 3, 4, and 6, the direction reverses: |β(Relief)| > |β(Regret)|
   (all p<0.05 after Bonferroni correction for 6 comparisons; lag 5 did not
   survive correction)
-- Per-subject paired t-test on |β(Regret_L1)| vs |β(Relief_L1)|: t(37)=3.92,
-  p=0.0004
+- Per-subject paired t-test on |β(Regret_L1)| vs |β(Relief_L1)|: t(40)=3.11,
+  p=0.00342
+  <img width="1200" height="900" alt="reward_vs_regret_per-subject_paired_comparison" src="https://github.com/user-attachments/assets/9e80d212-c568-4afc-b0bf-f45c803c7199" />
+  figure4. reward_vs_regret_per-subject_paired_comparison
+
+
 
 <img width="1200" height="900" alt="reward relief_magnitude_comparison" src="https://github.com/user-attachments/assets/690e92a7-29f2-44a6-a950-49c07ffbac4f" />
 <img width="1200" height="900" alt="reward relief_B_comparison" src="https://github.com/user-attachments/assets/43a4ad4c-8b2a-4e47-9be3-5a81d6eab8f9" />
