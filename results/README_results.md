@@ -52,10 +52,9 @@ higher-lag coefficients), a clean model with only `Regret_chosen` and
 - Per-subject paired t-test on |β(Regret_L1)| vs |β(Relief_L1)|: t(37)=3.92,
   p=0.0004
 
-**Figure:** `figures/02_regret_relief_coefficients_by_lag.png` — coefficient
-magnitude by lag, both curves overlaid.
-**Figure:** `figures/03_per_subject_paired_L1.png` — per-subject paired
-comparison plot.
+<img width="1200" height="900" alt="reward relief_magnitude_comparison" src="https://github.com/user-attachments/assets/690e92a7-29f2-44a6-a950-49c07ffbac4f" />
+<img width="1200" height="900" alt="reward relief_B_comparison" src="https://github.com/user-attachments/assets/43a4ad4c-8b2a-4e47-9be3-5a81d6eab8f9" />
+figure4. reward & relief magnitude comparison
 
 ---
 
