@@ -17,18 +17,21 @@ counterfactual comparison(regret)?
 A mixed-effects logistic regression comparing a reward-only model
 (`Reward_chosen` + `Reward_notchosen`, lags 1-6) against a model that adds
 `Regret_chosen` showed that adding regret significantly improved model fit
-(likelihood-ratio test, see console output for exact statistics). This
-result held after controlling for random-reward misattribution terms and was
+(likelihood-ratio test). This result held after controlling for random-reward misattribution terms and was
 consistent at the individual-subject level for a majority of participants.
 
 <img width="1200" height="900" alt="reward_vs_regret_coefficients" src="https://github.com/user-attachments/assets/403ec5bf-68ab-4363-9764-8775b0eaafb3" />
 figure1.Coefficient plot (Reward + Regret model)
 
+
+
 <img width="1200" height="900" alt="reward_vs_regret_lrt" src="https://github.com/user-attachments/assets/271139ed-3eea-47bc-aa17-c470468cb39b" />
 figure2. Reward vs. Reward + Regret model comparison.
 
-**Figure:** `figures/01_reward_vs_regret_lrt.png` — coefficient plot / model
-comparison bar chart.
+
+<img width="1200" height="900" alt="reward_vs_regret_incremental_value" src="https://github.com/user-attachments/assets/bf301f15-09ec-46bb-821e-33d4f6060442" />
+figure3. Reward vs. Reward + Regret incremental value
+
 
 ---
 
