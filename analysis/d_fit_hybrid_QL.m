@@ -5,7 +5,7 @@
 %  ql_negloglik.m in the same folder.
 % ============================================================
 
-basePath = 'D:\my task\subjects\all\run_based\final_touch';
+basePath = 'D:\my task\subjects\final_touch';
 moveDuration = 4;
 half_trial   = moveDuration / 2;   % same RT threshold convention as build_T_general_rnd.m
 
@@ -179,4 +179,85 @@ box on;
 
 % save figure 
 saveas(gcf,'AIC_M2_vs_M3_histogram.fig');   
-saveas(gcf,'AIC_M2_vs_M3_histogram.png');   
+saveas(gcf,'AIC_M2_vs_M3_histogram.png');
+
+%% ============================================================
+% Figure: Per-subject AIC comparison (M1/M2/M3)
+% ============================================================
+
+figure('Color','w','Position',[100 100 700 500]);
+hold on
+
+for s = 1:n_subjects
+    plot(1:3, results_aic(s,:), '-o', ...
+        'Color',[0.8 0.8 0.8], ...
+        'MarkerFaceColor',[0.8 0.8 0.8]);
+end
+
+meanAIC = mean(results_aic,1);
+
+plot(1:3, meanAIC, '-ko', ...
+    'LineWidth',3, ...
+    'MarkerSize',8, ...
+    'MarkerFaceColor','k');
+
+set(gca,...
+    'XTick',1:3,...
+    'XTickLabel',{'M1','M2','M3'});
+
+xlabel('Model');
+ylabel('AIC');
+title('Per-subject AIC comparison');
+
+grid on
+box on
+
+legend({'Subjects','Group mean'},'Location','Best');
+
+saveas(gcf,'QL_model_comparison_AIC.png');
+%% ============================================================
+% Figure: alpha_regret vs alpha_relief
+% ============================================================
+
+figure('Color','w','Position',[100 100 700 500]);
+hold on
+
+for s = 1:n_subjects
+    plot([1 2], ...
+         [alpha_regret_all(s) alpha_relief_all(s)], ...
+         '-o', ...
+         'Color',[0.75 0.75 0.75]);
+end
+
+mean_regret = mean(alpha_regret_all);
+mean_relief = mean(alpha_relief_all);
+
+sem_regret = std(alpha_regret_all)/sqrt(n_subjects);
+sem_relief = std(alpha_relief_all)/sqrt(n_subjects);
+
+errorbar(1, mean_regret, sem_regret, ...
+    'ko','LineWidth',3,'MarkerFaceColor','k','MarkerSize',8);
+
+errorbar(2, mean_relief, sem_relief, ...
+    'ko','LineWidth',3,'MarkerFaceColor','k','MarkerSize',8);
+
+set(gca,...
+    'XTick',[1 2],...
+    'XTickLabel',{'\alpha_{regret}','\alpha_{relief}'});
+
+ylabel('Learning rate');
+title('Regret vs Relief learning rates');
+
+ylim([0 1]);
+
+txt = sprintf('p = %.4f', p_asym);
+
+yl = ylim;
+text(1.5, yl(2)*0.95, txt, ...
+    'HorizontalAlignment','center', ...
+    'FontWeight','bold');
+
+grid on
+box on
+
+saveas(gcf,'alpha_regret_vs_relief.png');
