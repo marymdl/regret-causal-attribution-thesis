@@ -5,7 +5,7 @@ This page summarizes the findings so far.
 At the group level, participants achieved a mean accuracy of *67%*. Accuracy was defined as selecting the option with the highest expected value (i.e., the highest current underlying mean reward) on each trial.
 <img width="1200" height="900" alt="mu_based_accuracy" src="https://github.com/user-attachments/assets/5cf89990-de65-4100-9c39-273011ab0d2f" />
 
-[ z score? ]
+[ what's left? z-score results + alpha grid search results + random rewards + per subject analysis results (all in ppt file) ]
 
 
 ## 1. Regret predicts choice independently of raw reward value
@@ -58,9 +58,9 @@ higher-lag coefficients), a clean model with only `Regret_chosen` and
 
 
 
-<img width="1200" height="900" alt="reward relief_magnitude_comparison" src="https://github.com/user-attachments/assets/690e92a7-29f2-44a6-a950-49c07ffbac4f" />
+**Figure5:** <img width="1200" height="900" alt="reward relief_magnitude_comparison" src="https://github.com/user-attachments/assets/690e92a7-29f2-44a6-a950-49c07ffbac4f" />
 <img width="1200" height="900" alt="reward relief_B_comparison" src="https://github.com/user-attachments/assets/43a4ad4c-8b2a-4e47-9be3-5a81d6eab8f9" />
-figure5. reward & relief magnitude comparison
+ _ reward & relief magnitude comparison
 
 ---
 
@@ -78,7 +78,7 @@ regret and relief lag-coefficients:
 | Relief | -0.0311 | 3.38 | 2.34 |
 
 <img width="1200" height="900" alt="regret_relief_observed_fitted_decay_curves" src="https://github.com/user-attachments/assets/ce46dcc8-9a86-420d-8a59-91acd492d661" />
-figure6. observed vs. fitted decay curves
+**Figure6:** observed vs. fitted decay curves
 
 A subject-level bootstrap (2000 resamples) on τ(relief) − τ(regret) gave a
 mean difference of 1.63 events, 95% CI [0.95, 2.54], p<0.0001. Regret
@@ -102,7 +102,7 @@ forgone arm is updated via a fictive-learning term plus a rectified relief
 penalty (see `docs/methodology.md` for full equations). Three nested models
 were compared:
 
-- **M1** (reward-only) vs **M2** (symmetric counterfactual): ΔAIC ≈ 35-38,
+- **M1** (reward-only) vs **M2** (symmetric counterfactual): ΔAIC = 38.10,
   p<0.00001 — counterfactual learning is clearly present.
 - **M2** vs **M3** (asymmetric counterfactual): a small number of outlier
   subjects (likely local optima in the 5-parameter fit) initially made the
@@ -111,18 +111,20 @@ were compared:
   Wilcoxon signed-rank test (robust to outliers) confirmed the direction is
   reliable.
 - Fitted M3 parameters: mean α(regret) = 0.27-0.28, mean α(relief) =
-  0.61-0.66, paired t-test p<0.00001 — consistent with the regression-based
-  amplitude asymmetry.
+  0.61-0.66, paired t-test p<0.00001 
 - This result was **robust to adding a reaction-time-based correction**
   for whether feedback was seen before or after the response was made,
   which changed the fitted parameters negligibly — the asymmetry is not an
   artifact of that timing assumption.
 
-**Figure:** `figures/06_QL_model_comparison_AIC.png` — per-subject AIC
+**Figure8:** <img width="1200" height="900" alt="QL_model_comparison_AIC" src="https://github.com/user-attachments/assets/ed9bdb9b-bdf4-43b7-8e66-104fe3eab82e" />
+ — per subject AIC
 comparison across M1/M2/M3.
-**Figure:** `figures/07_alpha_regret_vs_relief.png` — fitted α(regret) vs
+**Figure9:** <img width="1200" height="900" alt="alpha_regret_vs_relief" src="https://github.com/user-attachments/assets/fcc91e50-eebf-4167-bbaa-b2762767d1dd" />
+ — fitted α(regret) vs
 α(relief) per subject.
 
+**Figure10:** <img width="1200" height="900" alt="AIC_M2_vs_M3_histogram" src="https://github.com/user-attachments/assets/521b6bd2-8fbe-4458-a602-831f0314edcf" />
 ---
 
 ## 5. Methodological checks and negative findings
