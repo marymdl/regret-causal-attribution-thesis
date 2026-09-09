@@ -1,4 +1,4 @@
-<img width="1200" height="900" alt="reward_vs_regret_per-subject_paired_comparison" src="https://github.com/user-attachments/assets/b184d6e6-3520-47dd-8eed-61b3e69b488c" /># Results
+#resluts
 
 This page summarizes the findings so far.
 
@@ -60,7 +60,7 @@ higher-lag coefficients), a clean model with only `Regret_chosen` and
 
 <img width="1200" height="900" alt="reward relief_magnitude_comparison" src="https://github.com/user-attachments/assets/690e92a7-29f2-44a6-a950-49c07ffbac4f" />
 <img width="1200" height="900" alt="reward relief_B_comparison" src="https://github.com/user-attachments/assets/43a4ad4c-8b2a-4e47-9be3-5a81d6eab8f9" />
-figure4. reward & relief magnitude comparison
+figure5. reward & relief magnitude comparison
 
 ---
 
