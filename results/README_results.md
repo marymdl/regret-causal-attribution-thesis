@@ -128,6 +128,7 @@ comparison across M1/M2/M3.
 
 ## 5. Q-learning model alpha real vs. fictive comparison
 <img width="661" height="56" alt="image" src="https://github.com/user-attachments/assets/98cc6ab5-1f37-41b3-b9a9-acacd2fb9ca6" />
+<img width="558" height="100" alt="image" src="https://github.com/user-attachments/assets/813b5649-6976-41b8-880e-b28c7d833147" />
 
 ---
 
